@@ -39,8 +39,10 @@ def test_example_dataset_is_valid_jsonl():
     assert rows
     for row in rows:
         assert isinstance(row, dict)
-        assert isinstance(row.get("instruction"), str) and row["instruction"]
-        assert isinstance(row.get("output"), str) and row["output"]
+        assert isinstance(row.get("messages"), list) and row["messages"]
+        assert row["messages"][0]["role"] == "user"
+        assert row["messages"][-1]["role"] == "assistant"
+        assert all(isinstance(m.get("content"), str) and m["content"] for m in row["messages"])
 
 
 def test_qlora_config_exists():
