@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="si">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nenapiyuma 4B — Chat</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;background:#0b1020;color:#eef2ff}
+.wrap{max-width:900px;margin:auto;min-height:100vh;display:flex;flex-direction:column;padding:18px}
+header{padding:14px 4px}h1{margin:0;font-size:24px}.sub{color:#aab4d0;font-size:13px;margin-top:5px}
+#chat{flex:1;padding:10px 0}.msg{max-width:82%;padding:12px 14px;border-radius:16px;margin:10px 0;white-space:pre-wrap;line-height:1.45}.user{margin-left:auto;background:#243b7a}.ai{background:#171f36}
+form{display:flex;gap:8px;position:sticky;bottom:0;padding:10px 0;background:#0b1020}textarea{flex:1;resize:none;border:1px solid #34405f;border-radius:14px;background:#11182b;color:#fff;padding:12px;min-height:52px}button{border:0;border-radius:14px;padding:0 18px;background:#6d7cff;color:white;font-weight:700}
+details{margin:8px 0;color:#aab4d0}input{width:100%;margin-top:8px;padding:10px;border-radius:10px;border:1px solid #34405f;background:#11182b;color:#fff}
+.ok{color:#7ee787}.warn{color:#ffd166}
+</style></head>
+<body><div class="wrap">
+<header><h1>🤖 Nenapiyuma 4B</h1><div class="sub">Sinhala-first • English • local model chat</div>
+<details><summary>⚙️ Model connection</summary>
+<input id="endpoint" value="http://127.0.0.1:8080/v1/chat/completions" aria-label="Model endpoint">
+<div class="sub">Run a local OpenAI-compatible llama.cpp server, then chat here. The browser UI does not invent or download a model.</div>
+</details></header>
+<main id="chat"><div class="msg ai">ආයුබෝවන්! Nenapiyuma 4B chat interface එක සූදානම්. 😊<br><span class="warn">සටහන: real Nenapiyuma GGUF model එක publish කරලා නැති තුරු මේ UI එකට real model response ලබාගන්න local model server එකක් අවශ්‍යයි.</span></div></main>
+<form id="form"><textarea id="prompt" placeholder="ඔයාට Nenapiyuma 4B ගෙන් අහන්න..." required></textarea><button>Send</button></form>
+</div>
+<script>
+const chat=document.querySelector('#chat'), form=document.querySelector('#form'), prompt=document.querySelector('#prompt'), endpoint=document.querySelector('#endpoint');
+function add(text,cls){const d=document.createElement('div');d.className='msg '+cls;d.textContent=text;chat.appendChild(d);d.scrollIntoView({behavior:'smooth'});return d}
+form.addEventListener('submit',async e=>{
+e.preventDefault();const p=prompt.value.trim();if(!p)return;prompt.value='';add(p,'user');const a=add('...','ai');
+try{
+const r=await fetch(endpoint.value.trim(),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:p}],temperature:.7,max_tokens:512,stream:false})});
+if(!r.ok)throw new Error('HTTP '+r.status);
+const j=await r.json();a.textContent=j.choices?.[0]?.message?.content||j.choices?.[0]?.text||'No response';
+}catch(err){a.textContent='සම්බන්ධ වීමට බැරි වුණා. Local model server එක run කරලා endpoint එක පරීක්ෂා කරන්න.\n\n'+err.message}
+});
+</script></body></html>
