@@ -1,0 +1,20 @@
+base_model_path: /ABSOLUTE/PATH/TO/Phi-3.5-mini-instruct
+dataset_path: data/train.jsonl
+output_dir: artifacts/nenapiyuma-4b-lora
+max_seq_length: 2048
+num_train_epochs: 1
+per_device_train_batch_size: 2
+gradient_accumulation_steps: 8
+learning_rate: 0.0002
+logging_steps: 10
+save_steps: 250
+warmup_ratio: 0.03
+lora_r: 64
+lora_alpha: 128
+lora_dropout: 0.05
+target_modules:
+  - qkv_proj
+  - o_proj
+  - gate_up_proj
+  - down_proj
+seed: 42
