@@ -4,13 +4,12 @@ import ast
 import json
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_python_sources_compile():
     sources = sorted((ROOT / "scripts").glob("*.py"))
-    assert sources, "No Python scripts found"
+    assert sources
     for path in sources:
         ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
 
@@ -19,10 +18,12 @@ def test_size_limit_is_strict():
     source = (ROOT / "scripts" / "check_size.py").read_text(encoding="utf-8")
     tree = ast.parse(source)
     values = [
-        node.value
+        node.value.value
         for node in ast.walk(tree)
         if isinstance(node, ast.Assign)
         and any(isinstance(t, ast.Name) and t.id == "MAX_BYTES" for t in node.targets)
+        and isinstance(node.value, ast.Constant)
+        and isinstance(node.value.value, int)
     ]
     assert values == [1_500_000_000]
 
@@ -38,15 +39,14 @@ def test_example_dataset_is_valid_jsonl():
     assert rows
     for row in rows:
         assert isinstance(row, dict)
-        assert "instruction" in row
-        assert "output" in row
-        assert isinstance(row["instruction"], str)
-        assert isinstance(row["output"], str)
+        assert isinstance(row.get("instruction"), str) and row["instruction"]
+        assert isinstance(row.get("output"), str) and row["output"]
 
 
 def test_qlora_config_exists():
     config = ROOT / "configs" / "qlora.yaml"
     assert config.is_file()
     text = config.read_text(encoding="utf-8")
-    assert "base_model:" in text
+    assert "base_model_path:" in text
+    assert "dataset_path:" in text
     assert "output_dir:" in text
