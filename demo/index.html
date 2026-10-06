@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="si">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nenapiyuma 4B — Try Demo</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0b1020;color:#eef2ff;font-family:system-ui,sans-serif}
+.wrap{max-width:900px;margin:auto;min-height:100vh;padding:18px;display:flex;flex-direction:column}
+header{padding:12px 2px 18px}h1{margin:0;font-size:27px}.tag{color:#aab4d0;margin-top:6px;font-size:14px}
+.banner{background:#141d35;border:1px solid #34405f;border-radius:16px;padding:14px;margin-bottom:12px}
+.banner strong{display:block;margin-bottom:5px}.status{font-size:13px;color:#7ee787}
+#chat{flex:1;min-height:48vh}.msg{max-width:84%;padding:12px 14px;border-radius:16px;margin:10px 0;white-space:pre-wrap;line-height:1.5}.user{margin-left:auto;background:#263d7d}.ai{background:#171f36}
+.quick{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.quick button,.send{border:0;border-radius:12px;padding:10px 13px;background:#273354;color:#eef2ff}
+form{display:flex;gap:8px;position:sticky;bottom:0;padding:10px 0;background:#0b1020}textarea{flex:1;resize:none;border:1px solid #34405f;border-radius:14px;background:#11182b;color:#fff;padding:12px;min-height:52px}.send{background:#6d7cff;font-weight:700}
+details{margin-top:10px;color:#aab4d0}input{width:100%;margin-top:8px;padding:10px;border-radius:10px;border:1px solid #34405f;background:#11182b;color:#fff}
+small{color:#8f9ab7}
+</style>
+</head>
+<body><div class="wrap">
+<header><h1>🤖 Nenapiyuma 4B</h1><div class="tag">Try the AI • Sinhala • English • Sinhala-English</div></header>
+<div class="banner"><strong>Demo / Quality Test</strong><span id="status">Demo server is not configured yet.</span><br><small>This is a separate test system. It does not pretend to be the model when no real model server is connected.</small></div>
+<div id="chat"><div class="msg ai">ආයුබෝවන්! 👋<br>මේ පිටුවෙන් Nenapiyuma 4B එකේ පිළිතුරු quality එක test කරන්න පුළුවන්. Real model server එක connect කළාම මෙතැනින් chat කරන්න පුළුවන්.</div></div>
+<div class="quick">
+<button data-p="සිංහලෙන් ඔබ ගැන කෙටි හැඳින්වීමක් කරන්න.">සිංහල test</button>
+<button data-p="Explain what you can do in simple English.">English test</button>
+<button data-p="Python වල loop එකක් සරලව explain කරන්න.">Coding test</button>
+<button data-p="2 + 2 = ? සහ හේතුව කියන්න.">Math test</button>
+</div>
+<form id="form"><textarea id="prompt" placeholder="ප්‍රශ්නයක් type කරන්න..." required></textarea><button class="send">Send</button></form>
+<details><summary>⚙️ Demo server</summary>
+<input id="endpoint" placeholder="HTTPS OpenAI-compatible endpoint (optional)">
+<small>For a public GitHub Pages demo, use a real HTTPS server with CORS. Do not put API keys in this page.</small>
+</details>
+</div>
+<script>
+const chat=document.querySelector('#chat'),form=document.querySelector('#form'),prompt=document.querySelector('#prompt'),endpoint=document.querySelector('#endpoint'),status=document.querySelector('#status');
+function add(t,c){const d=document.createElement('div');d.className='msg '+c;d.textContent=t;chat.appendChild(d);d.scrollIntoView({behavior:'smooth'});return d}
+document.querySelectorAll('.quick button').forEach(b=>b.onclick=()=>{prompt.value=b.dataset.p;prompt.focus()});
+form.onsubmit=async e=>{
+ e.preventDefault();const p=prompt.value.trim();if(!p)return;prompt.value='';add(p,'user');const a=add('...','ai');
+ const url=endpoint.value.trim();
+ if(!url){a.textContent='Demo server එක තවම connect කරලා නැහැ. Real Nenapiyuma 4B model එක publish/serve කළාම මේ පිටුවෙන් live test කරන්න පුළුවන්.';return}
+ try{
+  const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:p}],temperature:.7,max_tokens:512,stream:false})});
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  const j=await r.json();a.textContent=j.choices?.[0]?.message?.content||j.choices?.[0]?.text||'No response';status.textContent='Connected to demo server.';
+ }catch(err){a.textContent='Demo server එකට සම්බන්ධ වීමට බැරි වුණා.\n\n'+err.message;status.textContent='Connection failed.'}
+};
+</script>
+</body></html>
