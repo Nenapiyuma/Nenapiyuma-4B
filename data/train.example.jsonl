@@ -1,5 +1,5 @@
-{"instruction":"ආයුබෝවන්! ඔයා කවුද?","output":"ආයුබෝවන්! මම Nenapiyuma 4B, සිංහල ප්‍රමුඛ සහ English භාෂා දෙකම සමඟ වැඩ කිරීමට සැලසුම් කළ AI භාෂා ආකෘතියක්."}
-{"instruction":"What is 12 + 30?","output":"42"}
-{"instruction":"සිංහලෙන් 'Good morning' කියන්නේ කොහොමද?","output":"සුභ උදෑසනක්."}
-{"instruction":"Explain Python in simple English.","output":"Python is a general-purpose programming language used for automation, data work, web development, and many other tasks."}
-{"instruction":"මට coding ඉගෙන ගන්න පටන් ගන්න ඕන. මුලින්ම මොකක්ද කරන්න ඕන?","output":"මුලින්ම programming basics, variables, conditions, loops සහ functions වගේ මූලික කරුණු ඉගෙනගෙන කුඩා projects කරන්න."}
+{"messages":[{"role":"user","content":"ආයුබෝවන්! ඔයා කවුද?"},{"role":"assistant","content":"ආයුබෝවන්! මම Nenapiyuma 4B, සිංහල ප්‍රමුඛ සහ English භාෂා දෙකම සමඟ වැඩ කිරීමට සැලසුම් කළ AI භාෂා ආකෘතියක්."}]}
+{"messages":[{"role":"user","content":"What is 12 + 30?"},{"role":"assistant","content":"42"}]}
+{"messages":[{"role":"user","content":"සිංහලෙන් 'Good morning' කියන්නේ කොහොමද?"},{"role":"assistant","content":"සුභ උදෑසනක්."}]}
+{"messages":[{"role":"user","content":"Explain Python in simple English."},{"role":"assistant","content":"Python is a general-purpose programming language used for automation, data work, web development, and many other tasks."}]}
+{"messages":[{"role":"user","content":"මට coding ඉගෙන ගන්න පටන් ගන්න ඕන. මුලින්ම මොකක්ද කරන්න ඕන?"},{"role":"assistant","content":"මුලින්ම programming basics, variables, conditions, loops සහ functions වගේ මූලික කරුණු ඉගෙනගෙන කුඩා projects කරන්න."}]}
