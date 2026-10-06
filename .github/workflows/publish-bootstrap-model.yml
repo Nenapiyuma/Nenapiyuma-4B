@@ -3,7 +3,8 @@ name: Publish Nenapiyuma 4B bootstrap GGUF
 on:
   workflow_dispatch:
   push:
-    branches: ["main"]
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -12,19 +13,25 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
       - name: Download legal Phi-3.5-mini GGUF bootstrap
+        shell: bash
         run: |
           set -euo pipefail
-          curl -L --fail --retry 5 --retry-delay 5 \
-            -o Phi-3.5-mini-instruct-Q2_K.gguf \
-            "https://huggingface.co/second-state/Phi-3.5-mini-instruct-GGUF/resolve/main/Phi-3.5-mini-instruct-Q2_K.gguf?download=true"
+          URL="https://huggingface.co/second-state/Phi-3.5-mini-instruct-GGUF/resolve/main/Phi-3.5-mini-instruct-Q2_K.gguf?download=true"
+          curl --location --fail --show-error --retry 5 --retry-delay 5 --retry-all-errors \
+            --output Phi-3.5-mini-instruct-Q2_K.gguf "$URL"
+          test -s Phi-3.5-mini-instruct-Q2_K.gguf
 
       - name: Verify SHA-256 and hard size limit
+        shell: bash
         run: |
           set -euo pipefail
           EXPECTED_SHA="2e6564bea11e9447560fd9a83acac1b248293c2466ffee97683d3bf2288ce8e9"
           ACTUAL_SHA="$(sha256sum Phi-3.5-mini-instruct-Q2_K.gguf | awk '{print $1}')"
-          BYTES="$(stat -c%s Phi-3.5-mini-instruct-Q2_K.gguf)"
+          BYTES="$(stat -c '%s' Phi-3.5-mini-instruct-Q2_K.gguf)"
           echo "bytes=$BYTES"
           echo "sha256=$ACTUAL_SHA"
           test "$ACTUAL_SHA" = "$EXPECTED_SHA"
@@ -34,21 +41,25 @@ jobs:
       - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
+        shell: bash
         run: |
           set -euo pipefail
           if gh release view v0.1.0-bootstrap >/dev/null 2>&1; then
-            echo "Release v0.1.0-bootstrap already exists; refusing to overwrite."
+            echo "Release v0.1.0-bootstrap already exists; nothing to publish."
             exit 0
           fi
+
           gh release create v0.1.0-bootstrap \
             Phi-3.5-mini-instruct-Q2_K.gguf \
             --title "Nenapiyuma 4B v0.1.0 Bootstrap GGUF" \
             --prerelease \
-            --notes "Verified downloadable bootstrap build for Nenapiyuma 4B.
+            --notes-file - <<'NOTES'
+          Verified downloadable bootstrap build for Nenapiyuma 4B.
 
-IMPORTANT: this is the legal Microsoft Phi-3.5-mini-instruct base model in GGUF Q2_K form, not a fine-tuned Nenapiyuma checkpoint. It is published only to provide an immediate real 4B-class offline GGUF download while the Nenapiyuma fine-tuning pipeline is completed.
+          IMPORTANT: this is the legal Microsoft Phi-3.5-mini-instruct base model in GGUF Q2_K form, not a fine-tuned Nenapiyuma checkpoint. It is published only as a real 4B-class offline bootstrap artifact while the Nenapiyuma fine-tuning pipeline is completed.
 
-The workflow verifies the downloaded file SHA-256 and enforces a hard file-size limit below 1,500,000,000 bytes before publishing.
+          The workflow verifies the downloaded file SHA-256 and enforces a hard file-size limit below 1,500,000,000 bytes before publishing.
 
-Source: second-state/Phi-3.5-mini-instruct-GGUF
-SHA-256: 2e6564bea11e9447560fd9a83acac1b248293c2466ffee97683d3bf2288ce8e9"
+          Source: second-state/Phi-3.5-mini-instruct-GGUF
+          SHA-256: 2e6564bea11e9447560fd9a83acac1b248293c2466ffee97683d3bf2288ce8e9
+          NOTES
