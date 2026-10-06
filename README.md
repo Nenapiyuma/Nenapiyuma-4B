@@ -58,3 +58,7 @@ Android: open `android/nenapiyuma-android` in Android Studio and provide a local
 Windows: build `windows/Nenapiyuma.Windows` with .NET 8 and a local `llama-cli.exe`. This environment currently has no .NET SDK, so no EXE build is claimed.
 
 See MODEL_CARD.md for model provenance and limitations.
+
+
+## CI
+GitHub Actions validates Python syntax and the repository's automated tests on every push to `main` and pull request.
