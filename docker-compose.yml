@@ -1,0 +1,18 @@
+services:
+  nenapiyuma-inference:
+    build:
+      context: ./server
+    container_name: nenapiyuma-4b-inference
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      MODEL_URL: "https://github.com/Nenapiyuma/Nenapiyuma-4B/releases/download/v0.1.0-bootstrap/Phi-3.5-mini-instruct-Q2_K.gguf"
+      CTX_SIZE: "4096"
+      THREADS: "4"
+      PARALLEL: "1"
+    volumes:
+      - nenapiyuma-model:/models
+
+volumes:
+  nenapiyuma-model:
