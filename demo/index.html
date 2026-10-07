@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Nenapiyuma 4B — Try Demo</title>
+<title>Nenapiyuma 4B — Online Chat + Offline</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#0b1020;color:#eef2ff;font-family:system-ui,sans-serif}
 .wrap{max-width:900px;margin:auto;min-height:100vh;padding:18px;display:flex;flex-direction:column}
@@ -19,7 +19,7 @@ small{color:#8f9ab7}
 </head>
 <body><div class="wrap">
 <header><h1>🤖 Nenapiyuma 4B</h1><div class="tag">Try the AI • Sinhala • English • Sinhala-English</div></header>
-<div class="banner"><strong>Demo / Quality Test</strong><span id="status">Demo server is not configured yet.</span><br><small>This is a separate test system. It does not pretend to be the model when no real model server is connected.</small></div>
+<div class="banner"><strong>🌐 Online Chat + 💾 Offline Model</strong><span id="status">Online model server is not connected.</span><br><small>Online mode lets visitors chat without downloading the GGUF. Offline mode is for people who download the model and run it locally.</small></div>
 <div id="chat"><div class="msg ai">ආයුබෝවන්! 👋<br>මේ පිටුවෙන් Nenapiyuma 4B එකේ පිළිතුරු quality එක test කරන්න පුළුවන්. Real model server එක connect කළාම මෙතැනින් chat කරන්න පුළුවන්.</div></div>
 <div class="quick">
 <button data-p="සිංහලෙන් ඔබ ගැන කෙටි හැඳින්වීමක් කරන්න.">සිංහල test</button>
@@ -28,9 +28,9 @@ small{color:#8f9ab7}
 <button data-p="2 + 2 = ? සහ හේතුව කියන්න.">Math test</button>
 </div>
 <form id="form"><textarea id="prompt" placeholder="ප්‍රශ්නයක් type කරන්න..." required></textarea><button class="send">Send</button></form>
-<details><summary>⚙️ Demo server</summary>
-<input id="endpoint" placeholder="HTTPS OpenAI-compatible endpoint (optional)">
-<small>For a public GitHub Pages demo, use a real HTTPS server with CORS. Do not put API keys in this page.</small>
+<details><summary>⚙️ Online model server</summary>
+<input id="endpoint" placeholder="https://YOUR-INFERENCE-SERVER/v1/chat/completions">
+<small>GitHub Pages hosts this chat UI. A separate HTTPS inference server must load the real GGUF and expose an OpenAI-compatible endpoint with CORS. Do not put API keys in this page.</small><br><small>Offline: download the verified GGUF from Releases and run it with a local llama.cpp-compatible runtime.</small>
 </details>
 </div>
 <script>
@@ -40,12 +40,12 @@ document.querySelectorAll('.quick button').forEach(b=>b.onclick=()=>{prompt.valu
 form.onsubmit=async e=>{
  e.preventDefault();const p=prompt.value.trim();if(!p)return;prompt.value='';add(p,'user');const a=add('...','ai');
  const url=endpoint.value.trim();
- if(!url){a.textContent='Demo server එක තවම connect කරලා නැහැ. Real Nenapiyuma 4B model එක publish/serve කළාම මේ පිටුවෙන් live test කරන්න පුළුවන්.';return}
+ if(!url){a.textContent='Online model server එකේ HTTPS endpoint එක Settings වල දාන්න. GitHub Pages එක model එක download කරන්නේ නැහැ.';return}
  try{
   const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:[{role:'user',content:p}],temperature:.7,max_tokens:512,stream:false})});
   if(!r.ok)throw new Error('HTTP '+r.status);
   const j=await r.json();a.textContent=j.choices?.[0]?.message?.content||j.choices?.[0]?.text||'No response';status.textContent='Connected to demo server.';
- }catch(err){a.textContent='Demo server එකට සම්බන්ධ වීමට බැරි වුණා.\n\n'+err.message;status.textContent='Connection failed.'}
+ }catch(err){a.textContent='Online model server එකට සම්බන්ධ වීමට බැරි වුණා. Endpoint එක සහ server CORS/HTTPS settings පරීක්ෂා කරන්න.\n\n'+err.message;status.textContent='Connection failed.'}
 };
 </script>
 </body></html>
