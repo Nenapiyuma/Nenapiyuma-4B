@@ -1,0 +1,23 @@
+{
+  "name": "SK AI 1.3T Target",
+  "target_total_parameters": 1300000000000,
+  "architecture_status": "TARGET_SPECIFICATION_ONLY_NOT_YET_IMPLEMENTED",
+  "architecture_family": "decoder-only Transformer",
+  "attention": "GQA",
+  "moe": false,
+  "artifact_targets": {
+    "fp32_bytes": 5200000000000,
+    "bf16_bytes": 2600000000000,
+    "fp16_bytes": 2600000000000,
+    "int8_theoretical_bytes": 1300000000000,
+    "int4_theoretical_bytes": 650000000000
+  },
+  "training": {
+    "optimizer": "AdamW-class sharded optimizer",
+    "parallelism": ["data_parallel", "tensor_parallel", "pipeline_parallel"],
+    "state_sharding": "ZeRO-3/FSDP-equivalent",
+    "mixed_precision": "BF16",
+    "activation_checkpointing": true,
+    "checkpoint_resume": true
+  }
+}
